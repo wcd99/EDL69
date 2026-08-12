@@ -12,10 +12,13 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # 2. Inject Custom CSS
 def load_css(css_file):
-    if os.path.exists(css_file):
-        with open(css_file, "r", encoding="utf-8") as f:
+    css_path = os.path.join(BASE_DIR, css_file)
+    if os.path.exists(css_path):
+        with open(css_path, "r", encoding="utf-8") as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 load_css("styles.css")
@@ -23,8 +26,9 @@ load_css("styles.css")
 # 3. Load & Cache Dataset
 @st.cache_data
 def load_data():
-    csv_path = "./EDL69_tables/EDL69_drugs_all.csv"
+    csv_path = os.path.join(BASE_DIR, "EDL69_tables", "EDL69_drugs_all.csv")
     if not os.path.exists(csv_path):
+        # Fallback search in working dir or parent
         csv_path = "EDL69_tables/EDL69_drugs_all.csv"
     
     df = pd.read_csv(csv_path, dtype=str).fillna("")
